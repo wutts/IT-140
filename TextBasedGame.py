@@ -1,4 +1,4 @@
-# Alexey Gorenkov
+#Alexey Gorenkov
 
 #Sample function showing the goal of the game and move commands
 def show_instructions(player_name):  
@@ -9,7 +9,7 @@ def show_instructions(player_name):
    print("Add to Inventory: get 'item name'")
    print('_' * 30)
 
-# Show status function
+#Show status function
 def show_status(current_room, inventory, rooms, collected_rooms):
     print(f'You are in the {current_room}')
     print(f'Inventory: {inventory}')
@@ -17,7 +17,7 @@ def show_status(current_room, inventory, rooms, collected_rooms):
     if item_in_room and current_room not in collected_rooms:
         print(f'You see a {item_in_room}')
     print('_' * 30)
-
+#Parsing command, either go or get
 def parse_command(raw_input):
     stripped_input = raw_input.strip()
     if stripped_input.startswith('go '):
@@ -28,13 +28,19 @@ def parse_command(raw_input):
         return ('GET', name)
     else:
         return('INVALID', None)
-
+#Checking if direction is valid
 def check_direction(direction):
     if direction in ('North', 'South', 'East', 'West'):
         return True
     else:
         print('Invalid direction, please try North, South, East, West or exit')
         return False
+#Checking if player has collected all core items
+def check_core_items(inventory, core_items):
+    for core_item in core_items:
+        if core_item not in inventory:
+            return False
+    return True
         
 def main():
     player_name = input('Enter your name: ')
@@ -46,7 +52,7 @@ def main():
     answered_quizzes = []
     correct_answers = 0
     inventory = []
-    # For clarity in your win check:
+    #For clarity in your win check:
     core_items = {
         'Pocket Dictionary',
         'Barcode Scanner',
@@ -64,7 +70,7 @@ def main():
         'Tokyo Dorm': {
             'South': 'Room in Russia', 
             'East': 'Convenience Store Job', 
-            'item': 'Pocket Dictionary', # CORE ITEM
+            'item': 'Pocket Dictionary', #CORE ITEM
             'quiz': {
                 'prompt': 'What lessons did you learn in Tokyo Dorm?',
                 'choices': [
@@ -72,13 +78,13 @@ def main():
                     'I should\'ve stayed where I understood everything.',
                     'Real growth is only possible in your comfort zone.'
                 ],
-                'correct': 1 # Index of correct answer in choices list
+                'correct': 1 #Index of correct answer in choices list
             }
         },
         'Convenience Store Job': {
             'West': 'Tokyo Dorm', 
             'East': 'Tiny Apartment', 
-            'item': 'Barcode Scanner', # CORE ITEM
+            'item': 'Barcode Scanner', #CORE ITEM
             'quiz': {
                 'prompt': 'What was the real gain from your first job?',
                 'choices': [
@@ -86,13 +92,13 @@ def main():
                     'If I\'m not admired, I\'m not progressing.',
                     'I started from zero and still made it work.'
                 ],
-                'correct': 3 # Index of correct answer in choices list
+                'correct': 3 #Index of correct answer in choices list
             }
         },
         'Tiny Apartment': {
             'West': 'Convenience Store Job', 
             'North': 'Used Car Dealership', 
-            'item': 'Secondhand Laptop', # CORE ITEM
+            'item': 'Secondhand Laptop', #CORE ITEM
             'quiz': {
                 'prompt': 'What did you gain from the lonely apartment?',
                 'choices': [
@@ -106,7 +112,7 @@ def main():
         'Used Car Dealership': {
             'South': 'Tiny Apartment', 
             'East': 'Console Room',
-            'item': 'Spare Car Key', # CORE ITEM
+            'item': 'Spare Car Key', #CORE ITEM
             'quiz': {
                 'prompt': 'What did you gain from the used car dealership?',
                 'choices': [
@@ -114,13 +120,13 @@ def main():
                     'I bought, fixed, and let go — and learned to move on.',
                     'The more I own, the better I am.'
                 ],
-                'correct': 2 # Index of correct answer in choices list
+                'correct': 2 #Index of correct answer in choices list
             }
         },
         'Console Room': {
             'West': 'Used Car Dealership',
             'North': 'Amazon Office',
-            'item': 'Game Controller', # CORE ITEM
+            'item': 'Game Controller', #CORE ITEM
             'quiz': {
                 'prompt': 'What did video games teach you?',
                 'choices': [
@@ -128,13 +134,13 @@ def main():
                     'The things I once dreamed of didn\'t fill the void - but they helped me understand it.',
                     'If I\'m not fulfilled, I\'m broken.'
                 ],
-                'correct': 2 # Index of correct answer in choices list
+                'correct': 2 #Index of correct answer in choices list
             }
         },
         'Amazon Office': {
             'South': 'Console Room',
             'East': 'Rehab Room',
-            'item': 'Amazon Badge', # CORE ITEM
+            'item': 'Amazon Badge', #CORE ITEM
             'quiz': {
                 'prompt': 'What did your job at Amazon prove?',
                 'choices': [
@@ -142,19 +148,19 @@ def main():
                     'If I\'m not promoted, it means I\'m not good enough.',
                     'People should always recognize your effort.'
                 ],
-                'correct': 1 # Index of correct answer in choices list
+                'correct': 1 #Index of correct answer in choices list
             }
         },
         'Rehab Room': {
             'West': 'Amazon Office',
             'North': 'Mirror Room',
-            'item': 'Rehabilitation Cane', # OPTIONAL ITEM (not part of 6 core items)
-            # No quiz here
+            'item': 'Rehabilitation Cane', #OPTIONAL ITEM (not part of 6 core items)
+            #No quiz here
         },
         'Mirror Room': {
             'South': 'Rehab Room',
-            'villian': True # entering here ends the game
-            # No item, no quiz
+            'villian': True #Entering here ends the game
+            #No item, no quiz
         }
     }
 
