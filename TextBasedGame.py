@@ -1,9 +1,6 @@
 #Alexey Gorenkov
 
 #Sample function showing the goal of the game and move commands
-from ast import parse
-
-
 def show_instructions(player_name):  
    #print a main menu and the commands
    print(f'Welcome to \'Against the System Text Game\', {player_name}')
@@ -17,21 +14,24 @@ def show_status(current_room, inventory, rooms, collected_rooms):
     print(f'You are in the {current_room}')
     print(f'Inventory: {inventory}')
     item_in_room = rooms[current_room].get('item')
-    if item_in_room and current_room not in collected_rooms:
+    if item_in_room in collected_rooms and current_room not in collected_rooms:
         print(f'You see a {item_in_room}')
     print('_' * 30)
 
 #Parsing command, either go or get
 def parse_command(raw_input):
     stripped_input = raw_input.strip()
-    if stripped_input.startswith('go '):
-        direction = stripped_input[3:]
+    if not stripped_input:
+        return  ('INVALID', None)
+    
+    lower_stripped = stripped_input.lower()
+    if lower_stripped.startswith('go '):
+        direction = stripped_input[3:].strip().title()
         return ('MOVE', direction)
-    elif stripped_input.startswith('get '):
-        name = stripped_input[4:]
-        return ('GET', name)
-    else:
-        return('INVALID', None)
+    if lower_stripped.startswith('get '):
+        item_name = stripped_input[4:].strip().title()
+        return ('GET', item_name) if item_name else ("INVALID", None)
+    return ('INVALID', None)
 
 #Checking if direction is valid
 def check_direction(direction):
@@ -52,23 +52,26 @@ def check_core_items(inventory, core_items):
 def main():
     player_name = input('Enter your name: ')
     show_instructions(player_name)
+
     current_room = 'Room in Russia'
     villain_room = 'Mirror Room'
+
     rehab_unlocked = False 
-    collected_rooms = []
-    answered_quizzes = []
+    collected_rooms = [] #rooms where items was picked up
+    answered_quizzes = [] #rooms where quizzes were answered
     correct_answers = 0
     inventory = []
-    #For clarity in your win check:
-    core_items = {
+
+    #List of core items:
+    core_items = [
         'Pocket Dictionary',
         'Barcode Scanner',
         'Secondhand Laptop',
         'Spare Car Key',
         'Game Controller',
         'Amazon Badge',
-    }
-    total_items = 6
+    ]
+
     rooms = {
         'Room in Russia': {
             'North': 'Tokyo Dorm'
@@ -172,7 +175,7 @@ def main():
 
     while True:
         if current_room == villain_room:
-            if check_core_items(inventory, core_items) is True:
+            if check_core_items(inventory, core_items) == True:
                 print('You have collected all core items, faced the demon of Mirror room and defeated it!')
                 print('Now the real game begins')
             else:
@@ -182,14 +185,19 @@ def main():
         show_status(current_room, inventory, rooms, collected_rooms)
 
         #One-time quizk if present
-        if 'quiz' in rooms[current_room] and current_room not in answered_quizzes:
-            print(rooms[current_room]['quiz']['prompt']['choices'])
-            user_answer = input('Enter your answer: ')
-            if user_answer == quiz['correct']:
+        quiz = rooms[current_room].get('quiz')
+        if quiz and current_room not in answered_quizzes:
+            print(quiz['prompt'])
+            print(f'1) {quiz['choices'][0]}')
+            print(f'2) {quiz['choices'][1]}')   
+            print(f'3) {quiz['choices'][2]}')
+            user_answer = input('Choose 1/2/3: ')
+            if user_answer == str(quiz['correct']):
                 corrent_answers += 1
             else:
                 rehab_unlocked = True
             answered_quizzes.append(current_room)
+            print("_" * 30)
         
         #Command
         raw_input = input('Enter your move: ')
