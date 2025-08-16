@@ -10,10 +10,13 @@ def show_instructions(player_name):
    print('_' * 30)
 
 # Show status function
-def show_status(current_room, inventory):
+def show_status(current_room, inventory, rooms, collected_rooms):
     print(f'You are in the {current_room}')
-    print(f'Your inventory is {inventory}')
-    # If rooms[current_room] has an "item" AND it’s not already in inventory, print: “You see a <Item>.” - fix
+    print(f'Inventory: {inventory}')
+    item_in_room = rooms[current_room].get('item')
+    if item_in_room and current_room not in collected_rooms:
+        print(f'You see a {item_in_room}')
+    print('_' * 30)
 
 def parse_command(raw_input):
     raw_input.strip()
@@ -29,7 +32,8 @@ def check_direction(direction):
         return False
         
 def main():
-    show_instructions()
+    player_name = input('Enter your name: ')
+    show_instructions(player_name)
     current_room = 'Room in Russia'
     inventory = []
     collected_rooms = []
@@ -37,7 +41,7 @@ def main():
     correct_answers = 0
     rehab_unlocked = False 
     total_items = 6
-    villian_room = 'Mirror Room'
+    villain_room = 'Mirror Room'
     rooms = {
         'Room in Russia': {
             'North': 'Tokyo Dorm'
@@ -148,7 +152,7 @@ def main():
         'Amazon Badge',
     ]
 
-    while current_room != 'exit':
+    while current_room != villain_room and current_room != 'exit':
         print(f'You are in the {current_room}')
         user_direction = input('Choose direction: ').strip().lower()
         if user_direction == 'exit':
@@ -161,3 +165,4 @@ def main():
             current_room = possible_directions[user_direction]
         else:
             print('You can\'t go that way')
+
