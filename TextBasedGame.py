@@ -32,6 +32,8 @@ def main():
     show_instructions()
     current_room = 'Room in Russia'
     inventory = []
+    collected_rooms = []
+    answered_quizzes = []
     correct_answers = 0
     rehab_unlocked = False 
     total_items = 6
