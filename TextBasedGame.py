@@ -1,6 +1,9 @@
 #Alexey Gorenkov
 
 #Sample function showing the goal of the game and move commands
+from ctypes import c_uint
+
+
 def show_instructions(player_name):  
    #print a main menu and the commands
    print(f'Welcome to \'Against the System Text Game\', {player_name}')
@@ -184,16 +187,16 @@ def main():
             break
         show_status(current_room, inventory, rooms, collected_rooms)
 
-        #One-time quizk if present
+        #One-time quiz if present
         quiz = rooms[current_room].get('quiz')
         if quiz and current_room not in answered_quizzes:
             print(quiz['prompt'])
-            print(f'1) {quiz['choices'][0]}')
-            print(f'2) {quiz['choices'][1]}')   
-            print(f'3) {quiz['choices'][2]}')
+            print(f"1) {quiz['choices'][0]}")
+            print(f"2) {quiz['choices'][1]}")   
+            print(f"3) {quiz['choices'][2]}")
             user_answer = input('Choose 1/2/3: ')
             if user_answer == str(quiz['correct']):
-                corrent_answers += 1
+                correct_answers += 1
             else:
                 rehab_unlocked = True
             answered_quizzes.append(current_room)
@@ -204,7 +207,39 @@ def main():
         if raw_input.strip().lower() == 'exit':
             print('Thanks for playing!')
             break
-        parse_command(raw_input)
+        action, payload = parse_command(raw_input)
+        if action == 'INVALID':
+            print('Invalid command. Try: \'go North\' or \'get Pocket Dictionary\'.')
+            continue
+        
+        if action == 'MOVE':
+            direction = payload #North/South/East/West
+            # Rehab gate 
+            if current_room == 'Amazon Office' and direction == 'East' and not rehab_unlocked:
+                print('That path is closed to you for now.')
+                continue
+            if direction in rooms[current_room]:
+                current_room = rooms[current_room][direction]
+            else:
+                print('You can\'t go that way')
+        elif action == 'GET':
+            requested = payload
+            item_in_room = rooms[current_room].get('item')
+
+            if not item_in_room:
+                print("There's nothing to pick up here.")
+            elif current_room in collected_rooms:
+                print("You already picked that up.")
+            elif requested.lower() == item_in_room.lower():
+                inventory.append(item_in_room)
+                collected_rooms.append(current_room)
+                print(f"Picked up: {item_in_room}")
+            else:
+                print(f"That item isn't here. You see {item_in_room}.")
+
+if __name__ == '__main__':
+    main()
+
 
 
 
