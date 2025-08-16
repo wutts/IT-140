@@ -1,6 +1,9 @@
 #Alexey Gorenkov
 
 #Sample function showing the goal of the game and move commands
+from ast import parse
+
+
 def show_instructions(player_name):  
    #print a main menu and the commands
    print(f'Welcome to \'Against the System Text Game\', {player_name}')
@@ -17,6 +20,7 @@ def show_status(current_room, inventory, rooms, collected_rooms):
     if item_in_room and current_room not in collected_rooms:
         print(f'You see a {item_in_room}')
     print('_' * 30)
+
 #Parsing command, either go or get
 def parse_command(raw_input):
     stripped_input = raw_input.strip()
@@ -28,6 +32,7 @@ def parse_command(raw_input):
         return ('GET', name)
     else:
         return('INVALID', None)
+
 #Checking if direction is valid
 def check_direction(direction):
     if direction in ('North', 'South', 'East', 'West'):
@@ -35,13 +40,15 @@ def check_direction(direction):
     else:
         print('Invalid direction, please try North, South, East, West or exit')
         return False
+
 #Checking if player has collected all core items
 def check_core_items(inventory, core_items):
     for core_item in core_items:
         if core_item not in inventory:
             return False
     return True
-        
+
+# Main function
 def main():
     player_name = input('Enter your name: ')
     show_instructions(player_name)
@@ -62,7 +69,6 @@ def main():
         'Amazon Badge',
     }
     total_items = 6
-
     rooms = {
         'Room in Russia': {
             'North': 'Tokyo Dorm'
@@ -164,17 +170,33 @@ def main():
         }
     }
 
-    while current_room != villain_room and current_room != 'exit':
-        print(f'You are in the {current_room}')
-        user_direction = input('Choose direction: ').strip().lower()
-        if user_direction == 'exit':
-            current_room = 'exit'
-            print('Thanks for playing!')
-            continue
+    while True:
+        if current_room == villain_room:
+            if check_core_items(inventory, core_items) is True:
+                print('You have collected all core items, faced the demon of Mirror room and defeated it!')
+                print('Now the real game begins')
+            else:
+                print('You have not collected all core items, you were defeated by the demon of Mirror room')
+                print('Now the real struggle begins')
+            break
+        show_status(current_room, inventory, rooms, collected_rooms)
 
-        possible_directions = rooms[current_room]
-        if user_direction in possible_directions:
-            current_room = possible_directions[user_direction]
-        else:
-            print('You can\'t go that way')
+        #One-time quizk if present
+        if 'quiz' in rooms[current_room] and current_room not in answered_quizzes:
+            print(rooms[current_room]['quiz']['prompt']['choices'])
+            user_answer = input('Enter your answer: ')
+            if user_answer == quiz['correct']:
+                corrent_answers += 1
+            else:
+                rehab_unlocked = True
+            answered_quizzes.append(current_room)
+        
+        #Command
+        raw_input = input('Enter your move: ')
+        if raw_input.strip().lower() == 'exit':
+            print('Thanks for playing!')
+            break
+        parse_command(raw_input)
+
+
 
