@@ -1,5 +1,4 @@
 # Alexey Gorenkov
-inventory = []
 
 #Sample function showing the goal of the game and move commands
 def show_instructions(player_name):  
@@ -22,9 +21,17 @@ def parse_command(raw_input):
     # Else if input starts with "get " → return ("GET", ItemName)
     # Else → return ("INVALID", None)
 
+def check_direction(direction):
+    if direction in ('North', 'South', 'East', 'West'):
+        return True
+    else:
+        print('Invalid direction, please try North, South, East, West or exit')
+        return False
+        
 def main():
     show_instructions()
     current_room = 'Room in Russia'
+    inventory = []
     correct_answers = 0
     rehab_unlocked = False 
     total_items = 6
@@ -130,12 +137,25 @@ def main():
         }
     }
     # For clarity in your win check:
-    core_items = {
+    core_items = [
         'Pocket Dictionary',
         'Barcode Scanner',
         'Secondhand Laptop',
         'Spare Car Key',
         'Game Controller',
         'Amazon Badge',
-    }
-    
+    ]
+
+    while current_room != 'exit':
+        print(f'You are in the {current_room}')
+        user_direction = input('Choose direction: ').strip().lower()
+        if user_direction == 'exit':
+            current_room = 'exit'
+            print('Thanks for playing!')
+            continue
+
+        possible_directions = rooms[current_room]
+        if user_direction in possible_directions:
+            current_room = possible_directions[user_direction]
+        else:
+            print('You can\'t go that way')
