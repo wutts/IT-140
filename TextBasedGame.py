@@ -30,7 +30,7 @@ def parse_command(raw_input):
     lower_stripped = stripped_input.lower()
     if lower_stripped.startswith('go '):
         direction = stripped_input[3:].strip().title()
-        return ('MOVE', direction)
+        return ('GO', direction)
     if lower_stripped.startswith('get '):
         item_name = stripped_input[4:].strip()
         return ('GET', item_name) if item_name else ("INVALID", None)
@@ -64,6 +64,7 @@ def main():
     answered_quizzes = [] #rooms where quizzes were answered
     correct_answers = 0
     inventory = []
+    total_questions = 6
 
     #List of core items:
     core_items = [
@@ -178,9 +179,12 @@ def main():
 
     while True:
         if current_room == villain_room:
-            if check_core_items(inventory, core_items) == True:
+            has_all_items = check_core_items(inventory, core_items)
+            if has_all_items == True:
                 print('You have collected all core items, faced the demon of Mirror room and defeated it!')
                 print('Now the real game begins')
+            elif rehab_unlocked and 'Rehabilitation Cane' in inventory:
+                print('You have the Rehabilitation Cane, you already won, you can go back to life')
             else:
                 print('You have not collected all core items, you were defeated by the demon of Mirror room')
                 print('Now the real struggle begins')
@@ -194,16 +198,22 @@ def main():
             print(f"1) {quiz['choices'][0]}")
             print(f"2) {quiz['choices'][1]}")   
             print(f"3) {quiz['choices'][2]}")
-            user_answer = input('Choose 1/2/3: ')
+            user_answer = input('Choose 1/2/3: ').strip()
+            #Count correct quiz answers
             if user_answer == str(quiz['correct']):
                 correct_answers += 1
             else:
-                rehab_unlocked = True
+                pass
             answered_quizzes.append(current_room)
             print("_" * 30)
         
+        if len(answered_quizzes) == total_questions and correct_answers == total_questions:
+            rehab_unlocked = True
+            print('You\'ve aced every reflection. A hidden door unlocks somewhere...')
+        print("_" * 30)
+
         #Command
-        raw_input = input('Enter your move: ')
+        raw_input = input('Enter your action: ')
         if raw_input.strip().lower() == 'exit':
             print('Thanks for playing!')
             break
@@ -212,7 +222,7 @@ def main():
             print('Invalid command. Try: \'go North\' or \'get Pocket Dictionary\'.')
             continue
         
-        if action == 'MOVE':
+        if action == 'GO':
             direction = payload #North/South/East/West
             # Rehab gate 
             if current_room == 'Amazon Office' and direction == 'East' and not rehab_unlocked:
