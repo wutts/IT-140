@@ -1,13 +1,9 @@
 #Alexey Gorenkov
-
 #Sample function showing the goal of the game and move commands
-from ctypes import c_uint
-
-
 def show_instructions(player_name):  
    #print a main menu and the commands
    print(f'Welcome to \'Against the System Text Game\', {player_name}')
-   print("Your goal is to collect all 6 core items before facing the final demona.")
+   print("Your goal is to collect all 6 core items before facing the final demon.")
    print("Move commands: go South, go North, go East, go West")
    print("Add to Inventory: get 'item name'")
    print('_' * 30)
@@ -172,7 +168,7 @@ def main():
         },
         'Mirror Room': {
             'South': 'Rehab Room',
-            'villian': True #Entering here ends the game
+            'villain': True #Entering here ends the game
             #No item, no quiz
         }
     }
