@@ -7,17 +7,17 @@ from ctypes import c_uint
 def show_instructions(player_name):  
    #print a main menu and the commands
    print(f'Welcome to \'Against the System Text Game\', {player_name}')
-   print("Your goal is to collect all 6 core items before facing the final mirror.")
+   print("Your goal is to collect all 6 core items before facing the final demona.")
    print("Move commands: go South, go North, go East, go West")
    print("Add to Inventory: get 'item name'")
    print('_' * 30)
 
 #Show status function
 def show_status(current_room, inventory, rooms, collected_rooms):
-    print(f'You are in the {current_room}')
-    print(f'Inventory: {inventory}')
+    print(f'You are in: {current_room}')
+    print(f'Inventory: {inventory if inventory else []}')
     item_in_room = rooms[current_room].get('item')
-    if item_in_room in collected_rooms and current_room not in collected_rooms:
+    if item_in_room and current_room not in collected_rooms:
         print(f'You see a {item_in_room}')
     print('_' * 30)
 
@@ -32,7 +32,7 @@ def parse_command(raw_input):
         direction = stripped_input[3:].strip().title()
         return ('MOVE', direction)
     if lower_stripped.startswith('get '):
-        item_name = stripped_input[4:].strip().title()
+        item_name = stripped_input[4:].strip()
         return ('GET', item_name) if item_name else ("INVALID", None)
     return ('INVALID', None)
 
