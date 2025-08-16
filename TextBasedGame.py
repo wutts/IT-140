@@ -19,10 +19,15 @@ def show_status(current_room, inventory, rooms, collected_rooms):
     print('_' * 30)
 
 def parse_command(raw_input):
-    raw_input.strip()
-    # If input starts with "go " → return ("MOVE", Direction)
-    # Else if input starts with "get " → return ("GET", ItemName)
-    # Else → return ("INVALID", None)
+    stripped_input = raw_input.strip()
+    if stripped_input.startswith('go '):
+        direction = stripped_input[3:]
+        return ('MOVE', direction)
+    elif stripped_input.startswith('get '):
+        name = stripped_input[4:]
+        return ('GET', name)
+    else:
+        return('INVALID', None)
 
 def check_direction(direction):
     if direction in ('North', 'South', 'East', 'West'):
@@ -35,13 +40,23 @@ def main():
     player_name = input('Enter your name: ')
     show_instructions(player_name)
     current_room = 'Room in Russia'
-    inventory = []
+    villain_room = 'Mirror Room'
+    rehab_unlocked = False 
     collected_rooms = []
     answered_quizzes = []
     correct_answers = 0
-    rehab_unlocked = False 
+    inventory = []
+    # For clarity in your win check:
+    core_items = {
+        'Pocket Dictionary',
+        'Barcode Scanner',
+        'Secondhand Laptop',
+        'Spare Car Key',
+        'Game Controller',
+        'Amazon Badge',
+    }
     total_items = 6
-    villain_room = 'Mirror Room'
+
     rooms = {
         'Room in Russia': {
             'North': 'Tokyo Dorm'
@@ -142,15 +157,6 @@ def main():
             # No item, no quiz
         }
     }
-    # For clarity in your win check:
-    core_items = [
-        'Pocket Dictionary',
-        'Barcode Scanner',
-        'Secondhand Laptop',
-        'Spare Car Key',
-        'Game Controller',
-        'Amazon Badge',
-    ]
 
     while current_room != villain_room and current_room != 'exit':
         print(f'You are in the {current_room}')
