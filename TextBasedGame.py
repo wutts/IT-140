@@ -60,7 +60,7 @@ def main():
     answered_quizzes = [] #rooms where quizzes were answered
     correct_answers = 0
     inventory = []
-    total_questions = 6
+    total_quiz = sum(1 for room in rooms if 'quiz' in rooms[room])
 
     #List of core items:
     core_items = [
@@ -203,7 +203,7 @@ def main():
             answered_quizzes.append(current_room)
             print("_" * 30)
         
-        if len(answered_quizzes) == total_questions and correct_answers == total_questions:
+        if not rehab_unlocked and len(answered_quizzes) == total_quiz and correct_answers == total_quiz:
             rehab_unlocked = True
             print('You\'ve aced every reflection. A hidden door unlocks somewhere...')
         print("_" * 30)
