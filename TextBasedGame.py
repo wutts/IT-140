@@ -15,6 +15,8 @@ def show_status(current_room, inventory, rooms, collected_rooms):
     item_in_room = rooms[current_room].get('item')
     if item_in_room and current_room not in collected_rooms:
         print(f'You see a {item_in_room}')
+    available_directions = [direction for direction in ('North', 'South', 'East', 'West') if direction in rooms[current_room]]
+    print(f"Available directions: {', '.join(available_directions) if available_directions else 'None'}")
     print('_' * 30)
 
 #Parsing command, either go or get
@@ -60,7 +62,6 @@ def main():
     answered_quizzes = [] #rooms where quizzes were answered
     correct_answers = 0
     inventory = []
-    total_quiz = sum(1 for room in rooms if 'quiz' in rooms[room])
 
     #List of core items:
     core_items = [
@@ -149,6 +150,7 @@ def main():
         'Amazon Office': {
             'South': 'Console Room',
             'East': 'Rehab Room',
+            'North': 'Mirror Room',
             'item': 'Amazon Badge', #CORE ITEM
             'quiz': {
                 'prompt': 'What did your job at Amazon prove?',
@@ -167,11 +169,15 @@ def main():
             #No quiz here
         },
         'Mirror Room': {
+            'East': 'Amazon Office',
             'South': 'Rehab Room',
             'villain': True #Entering here ends the game
             #No item, no quiz
         }
     }
+    
+    # Calculate total number of quizzes after rooms dictionary is defined
+    total_quiz = sum(1 for room in rooms if 'quiz' in rooms[room])
 
     while True:
         if current_room == villain_room:
@@ -221,9 +227,10 @@ def main():
         if action == 'GO':
             direction = payload #North/South/East/West
             # Rehab gate 
-            if current_room == 'Amazon Office' and direction == 'East' and not rehab_unlocked:
-                print('That path is closed to you for now.')
-                continue
+            if current_room == 'Amazon Office' and direction == 'East':
+                if not (rehab_unlocked or check_core_items(inventory, core_items)):
+                    print("That path is closed until you've either aced every reflection or collected all six core items.")
+                    continue
             if direction in rooms[current_room]:
                 current_room = rooms[current_room][direction]
             else:
